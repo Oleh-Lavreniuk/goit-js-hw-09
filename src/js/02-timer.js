@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 // console.log('nowDate = ', options.defaultDate);
 // const deadline = new Date('2022-08-01 20:00');
@@ -15,7 +16,10 @@ const refs = {
   seconds: document.querySelector('[data-seconds]'),
 };
 
+let dateNow = new Date().getTime();
+console.log('dateNow', dateNow);
 let chosenDate = null;
+refs.startBtn.setAttribute('disabled', 'disabled');
 
 const options = {
   enableTime: true,
@@ -23,18 +27,34 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    console.log(selectedDates[0]);
+    chosenDate = selectedDates[0].getTime();
+    console.log('chosenDate', chosenDate);
 
-    // Этот if↓ должен срабатывать после onClose
-    if (selectedDates[0] < options.defaultDate) {
-      return alert('Please choose a date in the future');
+    if (selectedDates[0] < dateNow) {
+      return Notify.failure('Please choose a date in the future');
     }
+
+    refs.startBtn.removeAttribute('disabled');
+    refs.startBtn.addEventListener('click', onCountTime);
   },
 };
 
-let nowDate = options.defaultDate;
-
 flatpickr(refs.inputRef, options);
+
+function onCountTime() {
+  setInterval(() => {
+    const timerValue = chosenDate - dateNow;
+    console.log('chosenDate', chosenDate);
+    console.log('chosenDate', chosenDate.getTime());
+    convertMs(timerValue);
+  }, 1000);
+}
+
+// function addLeadingZero(value) {
+//   console.log('value', value);
+//   // convertMs(timerValue)
+//   // padStart();
+// }
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -54,9 +74,3 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-/**
-1) Добавь минимальное оформление элементов интерфейса.
-
-2) 
-*/
