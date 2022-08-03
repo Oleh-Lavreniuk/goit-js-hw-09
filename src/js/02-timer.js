@@ -2,11 +2,6 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-// console.log('nowDate = ', options.defaultDate);
-// const deadline = new Date('2022-08-01 20:00');
-// console.log('deadline = ', deadline);
-// console.log('delta = ', deadline - options.defaultDate);
-
 const refs = {
   inputRef: document.querySelector('#datetime-picker'),
   startBtn: document.querySelector('[data-start]'),
@@ -14,10 +9,25 @@ const refs = {
   hours: document.querySelector('[data-hours]'),
   minutes: document.querySelector('[data-minutes]'),
   seconds: document.querySelector('[data-seconds]'),
+
+  // timerDiv: document.querySelector('.timer'),
+  // dataCont: document.querySelectorAll('.field'),
+  // dataContValue: document.querySelectorAll('.value'),
+  // dataContLabel: document.querySelectorAll('.label'),
 };
 
-let dateNow = new Date().getTime();
-console.log('dateNow', dateNow);
+// refs.dataCont.forEach(el => {
+//   el.style.cssText = `
+// display: flex;
+// flex-direction: column;
+//     text-align: center;
+//   `;
+// });
+
+// refs.dataContLabel.forEach(el => {
+//   el.textContent.toUpperCase();
+// });
+
 let chosenDate = null;
 refs.startBtn.setAttribute('disabled', 'disabled');
 
@@ -27,34 +37,18 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    chosenDate = selectedDates[0].getTime();
-    console.log('chosenDate', chosenDate);
-
-    if (selectedDates[0] < dateNow) {
+    if (selectedDates[0] <= new Date()) {
       return Notify.failure('Please choose a date in the future');
     }
 
+    chosenDate = selectedDates[0];
+    console.log('chosenDate:', chosenDate);
+
     refs.startBtn.removeAttribute('disabled');
-    refs.startBtn.addEventListener('click', onCountTime);
   },
 };
 
 flatpickr(refs.inputRef, options);
-
-function onCountTime() {
-  setInterval(() => {
-    const timerValue = chosenDate - dateNow;
-    console.log('chosenDate', chosenDate);
-    console.log('chosenDate', chosenDate.getTime());
-    convertMs(timerValue);
-  }, 1000);
-}
-
-// function addLeadingZero(value) {
-//   console.log('value', value);
-//   // convertMs(timerValue)
-//   // padStart();
-// }
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -73,4 +67,35 @@ function convertMs(ms) {
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
   return { days, hours, minutes, seconds };
+}
+
+function updateTimerValues({ days, hours, minutes, seconds }) {
+  refs.days.textContent = addLeadingZero(days);
+  refs.hours.textContent = addLeadingZero(hours);
+  refs.minutes.textContent = addLeadingZero(minutes);
+  refs.seconds.textContent = addLeadingZero(seconds);
+}
+
+refs.startBtn.addEventListener('click', onCountTime);
+
+function onCountTime() {
+  let timerId = setInterval(() => {
+    let timerValue = chosenDate - new Date();
+
+    if (timerValue <= 0) {
+      clearInterval(timerId);
+      timerValue = 0;
+
+      const addMarkup = `<p class="message" 
+        style="color: red; font-size: 24px">You late, time is up!!!</p>`;
+      refs.timerDiv.insertAdjacentHTML('afterend', addMarkup);
+    }
+
+    const resObj = convertMs(timerValue);
+    updateTimerValues(resObj);
+  }, 1000);
+}
+
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
 }
