@@ -10,23 +10,27 @@ const refs = {
   minutes: document.querySelector('[data-minutes]'),
   seconds: document.querySelector('[data-seconds]'),
 
-  // timerDiv: document.querySelector('.timer'),
-  // dataCont: document.querySelectorAll('.field'),
-  // dataContValue: document.querySelectorAll('.value'),
-  // dataContLabel: document.querySelectorAll('.label'),
+  timerDiv: document.querySelector('.timer'),
+  dataCont: document.querySelectorAll('.field'),
+  dataContValue: document.querySelectorAll('.value'),
+  dataContLabel: document.querySelectorAll('.label'),
 };
 
-// refs.dataCont.forEach(el => {
-//   el.style.cssText = `
-// display: flex;
-// flex-direction: column;
-//     text-align: center;
-//   `;
-// });
+//* Start styles CSS
+refs.timerDiv.setAttribute('style', 'display: flex; flex-direction: row;');
 
-// refs.dataContLabel.forEach(el => {
-//   el.textContent.toUpperCase();
-// });
+refs.dataCont.forEach(function (el) {
+  el.setAttribute('style', 'margin-right: 14px; text-align: center;');
+});
+
+refs.dataContValue.forEach(function (el) {
+  el.setAttribute('style', 'display: block; font-size: 36px;');
+});
+
+refs.dataContLabel.forEach(function (el) {
+  el.setAttribute('style', 'text-transform: uppercase; font-size: 12px;');
+});
+//! End styles CSS
 
 let chosenDate = null;
 refs.startBtn.setAttribute('disabled', 'disabled');
