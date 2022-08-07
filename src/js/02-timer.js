@@ -17,14 +17,20 @@ const refs = {
 };
 
 //* Start styles CSS
-refs.timerDiv.setAttribute('style', 'display: flex; flex-direction: row;');
+refs.timerDiv.setAttribute(
+  'style',
+  'display: flex; flex-direction: row; margin-top: 14px;'
+);
 
 refs.dataCont.forEach(function (el) {
   el.setAttribute('style', 'margin-right: 14px; text-align: center;');
 });
 
 refs.dataContValue.forEach(function (el) {
-  el.setAttribute('style', 'display: block; font-size: 36px;');
+  el.setAttribute(
+    'style',
+    'display: block; font-size: 36px; margin-bottom: -10px;'
+  );
 });
 
 refs.dataContLabel.forEach(function (el) {
